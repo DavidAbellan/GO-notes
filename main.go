@@ -35,7 +35,7 @@
 //en otros casos es más complicado...
 //convertir decimal a string
 //texto = fmt.Sprintf('%d', moneda)
-//%d indica que es decimal
+//%d indica que es base 10
 //importando el paquete strconv también se podría, tiene muchas opciones
 
 //uint --- sin signos + ó -
@@ -44,7 +44,11 @@ package main
 
 //se importa el mismo package
 
-import "fmt"
+import (
+	"bufio"
+	"fmt"
+	"os"
+)
 
 //import "fmt"
 
@@ -58,6 +62,8 @@ func main() {
 	numero3 := 4
 	fmt.Println(numero3)
 	estados()
+	pedirPorTeclado()
+	iteraciones()
 }
 
 ////Condicionales
@@ -78,4 +84,91 @@ func estados() {
 	} else {
 		fmt.Println("Es Falso")
 	}
+}
+func pedirPorTeclado() {
+	var numero1 int
+	var numero2 int
+	var leyenda string
+	var resultado int
+	//fmt.Println("Ingrese numero :")
+	//fmt.Scanf("%d", numero1)
+
+	//fmt.Println("Ingrese numero :")
+	//fmt.Scanf("%d", numero2)
+	// de esta forma no funciona en Windows
+	// porque toma enter como valor del numero2
+
+	fmt.Println("Ingrese numero :")
+	fmt.Scanln(&numero1)
+
+	fmt.Println("Ingrese numero :")
+	fmt.Scanln(&numero2)
+
+	//fmt.Printf("%d", numero1+numero2)
+
+	fmt.Println("Descripción :")
+
+	scanner := bufio.NewScanner(os.Stdin)
+	if scanner.Scan() {
+		leyenda = scanner.Text()
+	}
+	resultado = numero1 + numero2
+	fmt.Println(leyenda, resultado)
+
+}
+
+//BUCLES
+//Sólo existe FOR
+
+func iteraciones() {
+	i := 1
+	for i < 10 {
+		fmt.Println(i)
+		i++
+	}
+
+	for y := 1; y < 10; y++ {
+		fmt.Println(y)
+	}
+
+	numero := 0
+	for {
+		fmt.Println("continuo")
+		fmt.Println("Ingrese el numero secreto")
+		fmt.Scan(&numero)
+		if numero == 100 {
+			break
+		}
+
+	}
+	///intercalar la variable
+	var z = 0
+	for z < 10 {
+		fmt.Printf("\n Valor de z : %d", z)
+		if z == 5 {
+			fmt.Printf("multiplicamos por 2 \n")
+			z = z * 2
+
+			//continue devuelve a la linea primera del for	for z < 10 {
+			continue
+		}
+		fmt.Printf("    Pasa por aquí\n")
+		z++
+	}
+
+	var f int
+
+	// crear una sección, no afecta a la ejecución
+RUTINA:
+
+	for f < 10 {
+		if f == 4 {
+			f = f + 2
+			fmt.Println("Voy a RUTINA sumando 2 a f")
+			goto RUTINA
+		}
+		fmt.Printf("valor de i: %d \n", f)
+		f++
+	}
+
 }
