@@ -64,6 +64,14 @@ func main() {
 	estados()
 	pedirPorTeclado()
 	iteraciones()
+	fmt.Println(uno(5))
+	n, e := dos(1)
+	fmt.Println(n)
+	fmt.Println(e)
+	tres(1)
+	fmt.Println(cuatro(5, 34, 22, 12, 12, 22, 1))
+	fmt.Println(cuatro(5, 34, 1))
+
 }
 
 ////Condicionales
@@ -171,4 +179,40 @@ RUTINA:
 		f++
 	}
 
+}
+
+//Funciones
+
+func uno(numero int) int {
+	return numero * 2
+}
+
+//función que devuelve dos parámetros, se pueden devolver los parámetros
+//cuantos se quieran
+func dos(numero int) (int, bool) {
+	if numero == 1 {
+		return 5, false
+	} else {
+		return 11, true
+	}
+}
+
+//con alias para la salida
+func tres(numero int) (z int) {
+	z = numero * 2
+	return
+}
+
+//con parámetros variables
+
+func cuatro(numero ...int) int {
+	total := 0
+	// _ se pone cuando recibimos una variable que no vamos a usar
+	//en este caso devuelve el index n de elementos que se mandan
+	for _, num := range numero {
+
+		total = total + num
+
+	}
+	return total
 }
