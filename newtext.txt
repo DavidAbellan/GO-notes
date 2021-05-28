@@ -1,0 +1,3 @@
+Escribiendo en el archivo
+
+ contenido de la función graboArchivo2

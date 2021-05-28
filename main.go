@@ -47,6 +47,9 @@ package main
 import (
 	"bufio"
 	"fmt"
+
+	//excepciones
+	"log"
 	"os"
 	"time"
 
@@ -54,6 +57,10 @@ import (
 	// solo se pueden importar carpetas
 	//si no se llamara user.go no funcionaría
 	usuario "./user"
+	//Manejo de archivos
+	"io/ioutil"
+	//goroutines
+	"strings"
 )
 
 // go env -w GO111MODULE=auto
@@ -65,11 +72,14 @@ var numero int
 var texto string
 var bul bool
 
+//Goroutines
+
 //func main(){----- la primera linea con { o si no no compila
 func main() {
 
 	numero3 := 4
 	fmt.Println(numero3)
+	go miNombreLento("David Abellán Motos")
 	estados()
 	pedirPorTeclado()
 	iteraciones()
@@ -100,12 +110,23 @@ func main() {
 	for po := 1; po < 11; po++ {
 		fmt.Println(MiTabla())
 	}
-
+	//la instrucción go hace ejecutar miNombreLento de forma asíncrona
+	fmt.Println("estoy aquí")
+	var x string
+	fmt.Scanln(&x)
+	canales()
+	//ejemploPanic()
 	mostrarSlice()
 	variante2()
 	mapas()
 	estructuras()
 	interfeises()
+	leoArchivo()
+	leoArchivo2()
+	graboArchivo()
+	graboArchivo2()
+	exponencia(2)
+	//viendoDefer()
 
 }
 
@@ -568,4 +589,151 @@ func (h *hombre) estarVivo() bool {
 }
 func (h *perro) estarVivo() bool {
 	return h.vivo
+}
+
+////Manejo de archivos
+
+func leoArchivo() {
+	archivo, err := ioutil.ReadFile("./text.txt")
+	//null en GO es nil
+	if err != nil {
+		fmt.Println("Hubo un error")
+	} else {
+		fmt.Println(string(archivo))
+
+	}
+
+}
+func leoArchivo2() {
+	archivo, err := os.Open("./text.txt")
+	if err != nil {
+		fmt.Println("Hubo un error")
+	} else {
+		scanner := bufio.NewScanner(archivo)
+		for scanner.Scan() {
+			registro := scanner.Text()
+			fmt.Printf("Linea >" + registro + "\n")
+
+		}
+
+	}
+	//con os hay que cerrar el archivo
+	archivo.Close()
+}
+func graboArchivo() {
+	archivo, err := os.Create("./newtext.txt")
+	if err != nil {
+		fmt.Println("Hubo un error")
+		return
+	}
+	fmt.Fprintln(archivo, "Escribiendo en el archivo")
+	//con os hay que cerrar el archivo
+	archivo.Close()
+}
+func graboArchivo2() {
+	FileName := "./newtext.txt"
+	if agregar(FileName, "\n contenido de la función graboArchivo2") == false {
+		fmt.Println("Error en la segunda Función")
+	}
+
+}
+func agregar(archivo string, texto string) bool {
+	arch, err := os.OpenFile(archivo, os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		fmt.Println("Hubo un error")
+		return false
+	}
+	//el guión bajo es para no recibir un parámetro de los que devuelve
+	//la función , en GO pueden devolver dos parámetros
+	_, err = arch.WriteString(texto)
+	if err != nil {
+		fmt.Println("Hubo un error")
+		return false
+	}
+	return true
+
+}
+
+///Recursividad
+
+func exponencia(numero int) {
+	if numero > 10000000000 {
+		return
+	}
+	fmt.Println(numero)
+	exponencia(numero * 2)
+}
+
+//Defer / Panic recover
+//manejo de errores
+
+//no hay try catch
+
+func viendoDefer() {
+	archivo := "prueba.txt"
+	f, err := os.Open(archivo)
+	//defer(va a ejecutarse siempre) va a cerrar el archivo independientemente se abra o no
+	//para liberar buffer en memoria por el open
+	defer f.Close()
+	if err != nil {
+		fmt.Println("error abriendo archivo")
+		os.Exit(1)
+	}
+}
+func ejemploPanic() {
+	//para recuperarse del error, no se puede ejecutar nada
+	//después de panic
+	//ponemos defer para asegurarnos que podemos seguir ejecutando
+	//defer sólo ejecuta una cosaç
+	// recover es una función que recoge si hubo un panic
+	defer func() {
+		rcover := recover()
+		if rcover != nil {
+			//%v para poder enviar un valor variable reco es un objeto
+			log.Fatalf("Ocurrió un error(panic) %v", rcover)
+		}
+	}()
+	am := 1
+	if am == 1 {
+		panic("se encontró valor de 1")
+	}
+}
+
+///GORoutines
+
+func miNombreLento(nombre string) {
+	letras := strings.Split(nombre, "")
+	for _, letra := range letras {
+		time.Sleep(1000 * time.Millisecond)
+		fmt.Println(letra)
+	}
+}
+
+//channels
+//cuando acaba el programa se cierra
+//aunque esté ejecutándose una operación
+//asíncrona de fondo termina
+
+//channels reserva un espacio de memoria
+
+func canales() {
+	canal1 := make(chan time.Duration)
+
+	go bucle(canal1)
+	fmt.Println("Llegué hasta aquí")
+
+	///estoy esperando así que termine esta función
+	//se detiene la ejecucíon
+
+	msg := <-canal1
+	fmt.Println(msg)
+}
+
+func bucle(canal chan time.Duration) {
+	inicio := time.Now()
+	for i := 0; i < 100000000000; i++ {
+
+	}
+	final := time.Now()
+	canal <- final.Sub(inicio)
 }
