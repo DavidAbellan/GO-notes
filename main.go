@@ -105,6 +105,7 @@ func main() {
 	variante2()
 	mapas()
 	estructuras()
+	interfeises()
 
 }
 
@@ -411,4 +412,160 @@ func estructuras() {
 	user.AltaUsuario(1, "German Burgos", time.Now(), true)
 	fmt.Println(user.Usuario)
 
+}
+
+//Interfaces
+
+//herencia de funciones, comportamientos
+
+type humano interface {
+	respirar()
+	pensar()
+	comer()
+	sexo() string
+	estarVivo() bool
+}
+
+type animal interface {
+	respirar()
+	estarVivo() bool
+
+	esCarnivoro() bool
+}
+type vegetal interface {
+	clasificacionVegetal() string
+}
+
+type hombre struct {
+	edad       int
+	altura     float32
+	peso       float32
+	respirando bool
+	pensando   bool
+	comiendo   bool
+	//variante heredando mujer de hombre
+	esHombre bool
+
+	//superClase EstarVivo
+	vivo bool
+}
+
+/*type mujer struct {
+	edad       int
+	altura     float32
+	peso       float32
+	respirando bool
+	pensando   bool
+	comiendo   bool
+}*/
+
+//mujer hereda todos los campos de la estructura hombre
+type mujer struct {
+	hombre
+}
+
+func (h *hombre) respirar() {
+	h.respirando = true
+}
+func (h *hombre) comer() {
+	h.comiendo = true
+}
+func (h *hombre) pensar() {
+	h.pensando = true
+}
+func (h *hombre) sexo() string {
+	//return "Hombre"
+	if h.esHombre == true {
+		return "Hombre"
+	} else {
+		return "Mujer"
+	}
+}
+
+/*func (m *mujer) respirar() {
+	m.respirando = true
+}
+func (m *mujer) comer() {
+	m.comiendo = true
+}
+func (m *mujer) pensar() {
+	m.pensando = true
+}
+func (m *mujer) sexo() string {
+	return "Mujer"
+}*/
+
+func humanosRespirando(hu humano) {
+	hu.respirar()
+	fmt.Printf("Soy un/a %s, y ya estoy respirando \n", hu.sexo())
+}
+
+type perro struct {
+	respirando bool
+	comiendo   bool
+	carnivoro  bool
+	vivo       bool
+}
+
+func (h *perro) respirar() {
+	h.respirando = true
+}
+func (h *perro) comer() {
+	h.comiendo = true
+}
+
+func (p *perro) esCarnivoro() bool {
+	return p.carnivoro
+}
+func AnimalesRespirar(an animal) {
+	an.respirar()
+	fmt.Println("Soy un animal y estoy respirando")
+}
+func AnimalesCarnivoros(an animal) int {
+	if an.esCarnivoro() {
+		return 1
+	}
+	return 0
+}
+func interfeises() {
+	Pedro := new(hombre)
+	//segunda variante
+	Pedro.esHombre = true
+	humanosRespirando(Pedro)
+
+	Maria := new(mujer)
+	humanosRespirando(Maria)
+
+	totalCarnivoros := 0
+	dogo := new(perro)
+	dogo.carnivoro = true
+	AnimalesRespirar(dogo)
+	totalCarnivoros = +AnimalesCarnivoros(dogo)
+	fmt.Printf("Total Carnivoros %d", totalCarnivoros)
+
+	//Si tiene las funciones declaradas en la interfaz
+	//func (h *perro) respirar() {
+	//h.respirando = true
+	//      }
+
+	//func (p *perro) esCarnivoro() bool {
+	//return p.carnivoro
+	//}
+
+	//automáticamente se implementa y se relaciona con ese tipo
+	//structura perro---interfaz animal
+
+	//permite que pertenezca a varias interfaces
+
+}
+
+type serVivo interface {
+	estarVivo() bool
+}
+
+func (h *hombre) estarVivo() bool {
+	return h.vivo
+}
+func (h *perro) estarVivo() bool {
+	return h.vivo
 }
