@@ -61,6 +61,8 @@ import (
 	"io/ioutil"
 	//goroutines
 	"strings"
+	//redes
+	"net/http"
 )
 
 // go env -w GO111MODULE=auto
@@ -76,7 +78,8 @@ var bul bool
 
 //func main(){----- la primera linea con { o si no no compila
 func main() {
-
+	fmiddlewr()
+	//detectarLocalhost()
 	numero3 := 4
 	fmt.Println(numero3)
 	go miNombreLento("David Abellán Motos")
@@ -736,4 +739,47 @@ func bucle(canal chan time.Duration) {
 	}
 	final := time.Now()
 	canal <- final.Sub(inicio)
+}
+
+//servidor web
+
+func home(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./index.html")
+}
+func detectarLocalhost() {
+	http.HandleFunc("/", home)
+	//escuchando puerto
+	http.ListenAndServe(":3000", nil)
+
+}
+
+//Middleware
+
+func sumar(a, b int) int {
+	return a + b
+}
+func restar(a, b int) int {
+	return a - b
+}
+func multiplicar(a, b int) int {
+	return a * b
+}
+func fmiddlewr() {
+	fmt.Println("inicio")
+
+	result := operacionesMid(sumar)(2, 3)
+	fmt.Println(result)
+	result = operacionesMid(restar)(2, 3)
+	fmt.Println(result)
+	result = operacionesMid(multiplicar)(2, 3)
+	fmt.Println(result)
+}
+
+//lo que recibe el middleware y lo que devuelve debe ser igual
+func operacionesMid(f func(int, int) int) func(int, int) int {
+	return func(a, b int) int {
+		fmt.Println("inicio de operación")
+		return f(a, b)
+	}
+
 }
